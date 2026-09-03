@@ -1,0 +1,131 @@
+---
+title: "Alzheimer's disease and treatment"
+author: "Matthias Grenié & Chanidapa Winalai"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{lastpage}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancypagestyle{plain}{
+      \renewcommand{\headrulewidth}{0pt}
+      \fancyhead[L]{}
+      \fancyhead[C]{M1 BHE - Informatics \& Statistics Exam}
+      \fancyhead[R]{2024-2025}
+      \fancyfoot[C]{\thepage/\pageref{LastPage}}
+    }
+  - \fancyhead[C]{M1 BHE - Informatics \& Statistics Exam}
+  - \fancyhead[R]{2024-2025}
+  - \fancyfoot[C]{\thepage/\pageref{LastPage}}
+---
+
+\pagestyle{fancy}
+
+**First Name**:\hspace{5cm} **Last Name**:\hspace{5cm}
+
+## Instructions
+
+The exam duration is **one hour**.  
+
+For this exam, **all documents are allowed** (including all previous notebooks), fact sheets/information sheets you may have prepared.
+
+Your answers must be complete but there is no need to give the code you typed unless otherwise specified.
+Show your work, including formulas and calculations where appropriate. Interpret all results in the context of Alzheimer's disease research and potential clinical implications.
+
+**Note about $\alpha$ threshold**: For all statistical tests, use a **significance level of $\alpha$ = 0.03**.
+
+
+## Background
+
+This dataset comes from a fictional longitudinal study investigating potential risk factors and treatment efficacy in Alzheimer's disease (AD). The study enrolled 200 participants, aged 50-90, with varying degrees of cognitive impairment. Researchers collected data on key AD biomarkers, genetic risk factors, and cognitive function. The APOE4 gene, a known risk factor for AD, was of particular interest, with participants categorized by their number of APOE4 alleles (0, 1, or 2). Cognitive function was assessed using a standardized test, yielding scores from 0-30, with higher scores indicating better cognitive performance. Brain volume measurements were included to track potential neurodegeneration. Cerebrospinal fluid (CSF) levels of amyloid-beta and tau proteins, both implicated in AD pathology, were measured. The study also evaluated two potential drug treatments (Drug A and Drug B) against a placebo, with follow-up assessments conducted at 6, 12, 18, and 24 months. This comprehensive dataset aims to shed light on the complex interplay between genetic predisposition, biomarkers, and treatment responses in Alzheimer's disease progression, potentially informing future diagnostic and therapeutic strategies.
+
+
+## Dataset structure
+
+This dataset contains 200 rows and 10 columns.
+
+- `patient_id`: Unique identifier for each patient,
+- `age`: Patient's age in years,
+- `sex`: Patient's biological sex (`"male"`/`"female"`),
+- `apoe4_status`: Number of APOE4 alleles (`0`, `1`, or `2`),
+- `cognitive_score`: Score on a cognitive assessment (0 to 30, higher is better),
+- `brain_volume`: Total brain volume in cm³,
+- `amyloid_beta`: Levels of amyloid-beta protein in cerebrospinal fluid (CSF),
+- `tau_protein`: Levels of tau protein in CSF,
+- `treatment`: Treatment group (`"placebo"`, `"drug_a"`, or `"drug_b"`),
+- `months_followup`: Duration of follow-up (6, 12, 18, or 24 months).
+
+
+
+## Questions
+
+**Question 1**. (1 point)  
+Calculate the mean and standard deviation of `cognitive_score` for the entire dataset. What do these values tell us about the cognitive function of the study population?   
+<!-- Grading: 0.5 points for correct calculation, 0.5 points for meaningful interpretation. -->
+\vskip 150pt
+
+**Question 2**. (2 points)  
+Is there a significant difference in `cognitive_score` between males and females? Perform an appropriate statistical test, state your hypotheses, and interpret the results in the context of Alzheimer's disease research.  
+<!-- Grading: 0.5 for correct test choice, 0.5 for hypotheses, 0.5 for correct execution, 0.5 for interpretation. -->
+\vskip 150pt
+
+**Question 3**. (2 points)  
+Calculate the median and interquartile range of `amyloid_beta` levels for patients with `apoe4_status` of 0, 1, and 2.  
+What do these descriptive statistics suggest about the relationship between APOE4 and amyloid-beta in Alzheimer's disease?  
+<!-- Grading: 1 point for correct calculations, 1 point for interpretation and implications. -->
+\vskip 150pt
+
+**Question 4**. (2 points)  
+Conduct a one-way ANOVA to compare the mean `cognitive_score` among the three treatment groups (placebo, drug A, drug B). State your hypotheses and interpret the results in terms of potential treatment effects.  
+<!-- Grading: 0.5 for hypotheses, 0.5 for correct execution, 1 for interpretation of treatment effects. -->
+\vskip 150pt
+
+**Question 5**. (2 points)  
+Perform a chi-square test of independence to examine the association between `treatment` and `apoe4_status`. What does the result suggest about the study design and randomization process?  
+<!-- Grading: 0.5 for correct test execution, 1.5 for interpretation and discussion of study design implications. -->
+\vskip 150pt
+
+**Question 6**. (2 points)  
+Calculate the correlation coefficient between `age` and `brain_volume`. Interpret the strength and direction of the relationship, and explain its relevance to Alzheimer's disease progression.  
+<!-- Grading: 0.5 for correct calculation, 1.5 for interpretation and relevance to AD. -->
+\newpage
+
+**Question 7**. (2 points)  
+Create a scatter plot of `cognitive_score` vs. `age`. Describe the pattern you observe and discuss how it aligns with or differs from general expectations about cognitive decline in aging.
+*Provide your code for this question*.  
+<!-- Grading: 0.5 for correct plot, 1.5 for description and discussion. -->
+\vskip 150pt
+
+**Question 8**. (2 points)  
+Develop a simple linear regression model to predict `tau_protein` based on `cognitive_score`.  
+Write the equation of the regression line and interpret what the slope and intercept mean in the context of Alzheimer's disease.  
+<!-- Grading: 0.5 for correct model, 0.5 for equation, 1 for interpretation of slope and intercept. -->
+\vskip 150pt
+
+**Question 9**. (3 points)  
+Conduct an analysis to determine if the effect of `treatment` on `cognitive_score` differs based on `apoe4_status`.  
+Use appropriate statistical methods to test for this interaction effect. Interpret your results and discuss their implications for personalized treatment approaches in Alzheimer's disease.  
+<!-- Grading: 1 point for choosing and executing appropriate statistical method, 1 point for correct interpretation of results, 1 point for discussing implications for personalized treatment. -->
+\newpage
+
+**Question 10**. (2 points)  
+Critically evaluate this study's design. Identify at least two limitations and propose how future studies could address these to improve our understanding of Alzheimer's disease progression and treatment.  
+<!-- Grading: 1 point for identifying limitations, 1 point for proposing improvements. -->
+\vskip 150pt
+
+
+## Bonus Questions
+(1 point each, not counted in the main 20-point total)
+
+These questions should be directly answered on the answer sheet!
+
+**Bonus Question 1**. (1 point)  
+Propose an additional biomarker or variable that could be included in future Alzheimer's disease studies. Explain how this variable might contribute to our understanding of the disease and its potential relationship with existing variables in the dataset.  
+<!-- Grading: 0.5 for proposing a relevant biomarker, 0.5 for explaining its potential contribution. -->
+\vskip 150pt
+
+**Bonus Question 2**. (1 point)  
+In the context of Alzheimer's disease research, explain the importance of longitudinal studies compared to cross-sectional studies. How might the conclusions drawn from each type of study differ?  
+<!-- Grading: 0.5 for explaining the difference between study types, 0.5 for discussing their implications in AD research. -->
+\vskip 150pt

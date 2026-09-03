@@ -1,0 +1,240 @@
+---
+title: "Heart disease prevalence"
+author: "Matthias Grenié & Laila Blömer"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{lastpage}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancypagestyle{plain}{
+      \renewcommand{\headrulewidth}{0pt}
+      \fancyhead[L]{}
+      \fancyhead[C]{M1 BHE - Informatics \& Statistics Exam}
+      \fancyhead[R]{2025-2026}
+      \fancyfoot[C]{\thepage/\pageref{LastPage}}
+    }
+  - \fancyhead[C]{M1 BHE - Informatics \& Statistics Exam}
+  - \fancyhead[R]{2025-2026}
+  - \fancyfoot[C]{\thepage/\pageref{LastPage}}
+---
+
+\pagestyle{fancy}
+
+**First Name**:\hspace{5cm} **Last Name**:\hspace{5cm}
+
+# Instructions
+
+The exam duration is **one hour and a half**.  
+
+For this exam, **all documents are allowed** (including all previous notebooks), fact sheets/information sheets you may have prepared.
+
+Your answers must be complete but there is no need to give the code you typed unless otherwise specified.
+Show your work, including formulas and calculations where appropriate. Interpret all results in the context of Alzheimer's disease research and potential clinical implications.
+
+**Note about $\alpha$ threshold**: For all statistical tests, use a **significance level of $\alpha$ = 0.03**.
+
+
+# Dataset
+
+You are analyzing data from a heart health study conducted on 150 adults aged 25-65. The dataset `heart_health.csv` contains the following variables:
+
+- `patient_id`: Unique patient identifier
+- `age`: Age in years
+- `gender`: Gender (Male/Female)
+- `bmi`: Body Mass Index (kg/m²)
+- `systolic_bp`: Systolic blood pressure (mmHg)
+- `diastolic_bp`: Diastolic blood pressure (mmHg)
+- `cholesterol`: Total cholesterol level (mg/dL)
+- `exercise_freq`: Exercise frequency per week (0-7 days)
+- `smoking_status`: Smoking status (Never/Former/Current)
+- `heart_disease`: Presence of heart disease (Yes/No)
+
+
+\newpage
+
+# Questions
+
+**Load the dataset using:** `heart_data <- read.csv("heart_health.csv")`
+
+```{r load-data}
+heart_data = read.csv("heart_health.csv")
+```
+
+## Describing the dataset
+
+**Question 1**. (1 point) **No need to give the R code**  
+How many patients are below 35 years old?
+**1 point for correct value**
+
+```{r q1}
+nrow(subset(heart_data, age < 35))
+```
+
+**Question 2**. (2 points) **No need to give the R code**  
+What is the average BMI of individuals aged over 60?
+**2 points for correct value**
+
+```{r q2}
+mean(heart_data$bmi[heart_data$age > 60])
+
+# or
+
+mean(heart_data$bmi[heart_data$age >= 60])
+
+```
+
+**Question 3**. (3 points) **Give the R code**  
+Create a boxplot showing the distribution of systolic blood pressure by gender.
+Include appropriate labels and title, and interpret the plot in 2-3 sentences
+discussing any visible differences between groups.
+**1 point for code, 2 points for interpretation**
+
+```{r q3}
+
+boxplot(systolic_bp ~ gender, data = heart_data)
+
+```
+
+\newpage
+
+## Testing simple hypotheses
+
+**Question 4**. (3 points)  
+Test whether there is a difference in mean BMI between patients with and without heart disease. State your hypotheses, perform the test, **give the code you used to
+perform the test**, and interpret your findings at α = 0.03.
+**1 point for hypotheses, 1 point for the test, 1 point for interpretation**
+
+We want to perform a t-test with two independent samples between patients with and without heart diseases.
+
+Hypotheses: H0 = no difference in BMI between patients H1 = there is a difference in BMI between patients
+
+Check assumptions:
+
+```{r q4-assumptions}
+table(heart_data$heart_disease)
+```
+
+There are 18 patients with heart disease, which is less than 30, as such we need to check the normality of both samples as well as there homoscedasticity.
+
+```{r q4-norm}
+
+with_disease = subset(heart_data, heart_disease == "Yes")
+
+without_disease = subset(heart_data, heart_disease == "No")
+
+par(mfrow = c(1, 2))
+qqnorm(with_disease$bmi)
+qqline(with_disease$bmi)
+
+qqnorm(without_disease$bmi)
+qqline(without_disease$bmi)
+```
+
+Graphically we see that the quantile lines matched -> so we can say that both samples follow a normal distribution. Let's check their homoscedasticity with a Fisher variance test (Hypotheses: H0 = Equal variances, H1 = Different variances):
+
+```{r q4-homoscedasticity}
+var.test(with_disease$bmi, without_disease$bmi)
+```
+
+p >>> 0.03, as such we can't reject H0, and the variances of both samples are equal.
+
+In total we can perform a t-test
+
+```{r q4-test}
+
+t.test(with_disease$bmi, without_disease$bmi)
+```
+
+We get p = 0.13 >>> 0.03, thus we can't reject H0 so the means of both samples are equal, which means that there is no difference in BMI between patients with and without heart disease.
+
+**Question 5**.  (4 points)  
+Investigate whether there is an association between smoking status and heart
+disease. Perform the appropriate test, give its hypotheses, and interpret your
+results. What can you conclude about the relationship between smoking and heart
+disease?
+**1 point for correct test, 1 point for hypotheses, 1 point interpretation,
+1 point for general conclusion**
+
+We want to perform a chi-square test between two qualitative variables (smoking and heart disease), for this all of the expected counts should be above 5.
+
+Let's check it.
+
+```{r q5-assumptions}
+chisq.test(heart_data$smoking_status, heart_data$heart_disease)$expected
+```
+
+We see that there are less than 5 expected people which are current smokers with heart disease. Thus we're currently violating the assumptions of the chi-square test.
+
+To avoid that, we need to regroup Current and Former smokers.
+
+```{r q5-regroup}
+heart_data$new_smoking = ifelse(heart_data$smoking_status == "Current", "Former", heart_data$smoking_status)
+
+chisq.test(heart_data$new_smoking, heart_data$heart_disease)$expected
+```
+
+Let's now perform the chi-square independence test.
+
+Hypotheses : H0 = heart disease are independent of smoking, H1 = heart disease and smoking are linked
+
+```{r q5-test}
+chisq.test(heart_data$new_smoking, heart_data$heart_disease)
+```
+
+We observe p = 0.29 >>> 0.03, so we can't reject H0, and as such we don't observe a link between smoking status and heart disease in our sample. This seems contradictory to common knowledge.
+
+## Modeling cholesterol levels
+
+**Question 6**. (7 points)  
+Build a linear regression model to predict cholesterol levels using age and BMI as predictors.
+
+a) **Give the R code you use to fit the model** (1 point)
+** 1 point correct code **
+
+```{r q6a}
+lm_chol = lm(cholesterol ~ age + bmi, data = heart_data)
+```
+
+b) Report the regression equation with coefficient values (2 points)
+**2 points for correction equation and coefficients**
+
+```{r q6b}
+summary(lm_chol)
+```
+
+$$cholesterol = 176 + 0.77 \times age + 0.47 \times bmi$$
+
+c) Interpret the coefficient for age in the context of the study (2 points)
+**2 points for correct interpretation**
+
+We have a positive coefficient of age, which means that age increases cholesterol content. With each additional year of age, the concentration of cholesterol increases by 0.77 mg/dL.
+
+
+d) Test the overall significance of the model and report the R² value, what can you say about the model? (2 points)
+**1 point for reporting correct values of R² and significance, 1 point for interpretation of the model**
+
+As given by the model, the adjusted R square is 0.06 (=6%) which is very low. It means that using age and BMI explains only 6% of the variation of cholesterol content. The overall p-value of the variance test is equal to 0.003 which is lower than 0.03, so this means that the model is better at explaining cholesterol content than a flat line.
+
+
+\newpage
+
+# Bonus Questions
+
+(1 point each, not counted in the main 20-point total)
+
+These questions should be directly answered on the answer sheet!
+
+**Bonus Question 1**. (1 point)  
+In a clinical trial comparing two treatments, why might researchers choose a
+paired t-test instead of a two-sample t-test?
+**1 point for naming measuring same patients twice**
+\vskip 250pt
+
+**Bonus Question 2**. (1 point)  
+A researcher finds a correlation coefficient of r = 0.85 between two variables
+and concludes that one variable causes the other. What is wrong with this
+conclusion? Name one alternative explanation for this strong correlation.
+**1 point for causation ≠ correlation, spurrious correlation, etc.**
+

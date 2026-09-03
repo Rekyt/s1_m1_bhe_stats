@@ -1,0 +1,15 @@
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - r
+  - r-mass
+  - r-ggplot2
+  - r-GGally
+  - r-caret
+  - r-pROC
+  - r-ade4
+  - r-MASS
+  - r-resourceselection
+  - r-DHARMa
+
